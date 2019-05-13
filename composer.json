@@ -1,0 +1,22 @@
+{
+  "name": "pimcore/image-tagging",
+  "license": "GPL-3.0+",
+  "type": "pimcore-bundle",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\ImageTaggingBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Pimcore\\ImageTaggingBundle\\PimcoreImageTaggingBundle"
+      ]
+    }
+  }
+}
