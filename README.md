@@ -22,3 +22,7 @@ After training a model with training data, it is possible to auto-tag new images
  
    ``` bin/console pimcore:tensorflow predict -N cars_country -m 0 -i 231 ```
 
+
+## Credits
+
+- @poel22
