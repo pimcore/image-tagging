@@ -1,0 +1,4 @@
+_pimcore_image_tagging_backend:
+    resource: "@PimcoreImageTaggingBundle/Controller/"
+    type:     annotation
+    prefix:   /admin/bundle/image-tagging

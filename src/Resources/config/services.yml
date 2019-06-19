@@ -1,13 +1,17 @@
 services:
-   _defaults:
-       autowire: true
-       autoconfigure: true
-       public: false
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
 
-   #
-   # COMMANDS
-   #
 
-   # auto-register all commands as services
-   Pimcore\Bundle\ImageTaggingBundle\Command\:
+    # auto-register all commands as services
+    Pimcore\Bundle\ImageTaggingBundle\Command\:
         resource: '../../Command'
+
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\ImageTaggingBundle\Controller\:
+        resource: '../../Controller'
+
+    Pimcore\Bundle\ImageTaggingBundle\Service\ImageTaggingService: ~

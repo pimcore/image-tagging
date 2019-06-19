@@ -19,4 +19,19 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class PimcoreImageTaggingBundle extends AbstractPimcoreBundle
 {
+
+    public function getJsPaths()
+    {
+        return [
+            '/bundles/pimcoreimagetagging/js/startup.js'
+        ];
+    }
+
+    public function getCssPaths()
+    {
+        return [
+            '/bundles/pimcoreimagetagging/css/icons.css'
+        ];
+    }
+
 }

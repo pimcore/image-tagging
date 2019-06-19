@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\ImageTaggingBundle\Command;
@@ -24,11 +24,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PimcoreTensorflowCommand extends AbstractCommand
 {
     private $params;
-    private $tensorflowService;
+
+    /**
+     * @var Service\ImageTaggingService
+     */
+    protected $tensorflowService;
+
+    public function __construct(Service\ImageTaggingService $tensorflowService, $name = null)
+    {
+        parent::__construct($name);
+        $this->tensorflowService = $tensorflowService;
+    }
 
     protected function configure()
     {
-        $this->tensorflowService = Service\ImageTaggingService::getInstance();
         $this
             ->setName('pimcore:tensorflow')
             ->setDescription('Makes use of tensorflow retrain.py')
@@ -83,32 +92,32 @@ class PimcoreTensorflowCommand extends AbstractCommand
     {
         $this->dump('training network');
         $this->tensorflowService->train(
-              $this->params['modelName'],
-              $this->params['modelVersion'],
-              $this->params['path'],
-              $this->params['parentTag']
-          );
+            $this->params['modelName'],
+            $this->params['modelVersion'],
+            $this->params['path'],
+            $this->params['parentTag']
+        );
     }
 
     private function retrain()
     {
         $this->dump('retraining network');
         $this->tensorflowService->retrain(
-              $this->params['modelName'],
-              $this->params['modelVersion'],
-              $this->params['path'],
-              $this->params['instance']
-          );
+            $this->params['modelName'],
+            $this->params['modelVersion'],
+            $this->params['path'],
+            $this->params['instance']
+        );
     }
 
     private function predict()
     {
         $this->dump('option predict');
         $this->tensorflowService->predict(
-              $this->params['modelName'],
-              $this->params['modelVersion'],
-              $this->params['assetId']
-          );
+            $this->params['modelName'],
+            $this->params['modelVersion'],
+            $this->params['assetId']
+        );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)

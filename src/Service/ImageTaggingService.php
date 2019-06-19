@@ -9,8 +9,8 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\ImageTaggingBundle\Service;
@@ -36,17 +36,17 @@ class ImageTaggingService
 
     public function __construct()
     {
-        $this->tensorflowPath = PIMCORE_PROJECT_ROOT.'/src/tensorflow';
+        $this->tensorflowPath = PIMCORE_PROJECT_ROOT . '/src/tensorflow';
 
-        $tfDataPath = PIMCORE_PRIVATE_VAR.'/tensorflow-data';
-        $this->modelPath = $tfDataPath.'/model/';
-        $this->labelPath = $tfDataPath.'/labels/';
-        $this->cachePath = $tfDataPath.'/cache';
+        $tfDataPath = PIMCORE_PRIVATE_VAR . '/tensorflow-data';
+        $this->modelPath = $tfDataPath . '/model/';
+        $this->labelPath = $tfDataPath . '/labels/';
+        $this->cachePath = $tfDataPath . '/cache';
         $this->standardTrainFlags = '--testing_percentage 20 --validation_percentage 20 ' .
-            '--how_many_training_steps 500 --bottleneck_dir '.$tfDataPath.'/bottleneck';
+            '--how_many_training_steps 500 --bottleneck_dir ' . $tfDataPath . '/bottleneck';
     }
 
-    // helper funtions
+    // helper functions
 
     private function getGraphFullName(string $modelName, string $modelVersion)
     {
@@ -55,15 +55,15 @@ class ImageTaggingService
 
     private function getLabelFullName(string $modelName, string $modelVersion)
     {
-        return $this->labelPath. $modelName . '.v' . $modelVersion;
+        return $this->labelPath . $modelName . '.v' . $modelVersion;
     }
 
     private function linkAssetToTrainingLocation(Asset $asset, string $tagDir = null)
     {
         if ($tagDir == null) {
-            $tagDir = $this->cachePath . '/' . $asset->getFilename();
+            $tagDir = '"' . $this->cachePath . '/' . $asset->getFilename() . '"';
         }
-        exec('ln ' . $asset->getFileSystemPath()  . ' ' . $tagDir);
+        exec('ln -s "' . $asset->getFileSystemPath() . '" ' . $tagDir);
 
         return $tagDir;
     }
@@ -124,20 +124,21 @@ class ImageTaggingService
     }
 
     private function executeClassifierForSingleElement(
-          string $modelName,
-          string $modelVersion,
-          string $assetLinkPath
-     ) {
+        string $modelName,
+        string $modelVersion,
+        string $assetLinkPath
+    )
+    {
         $execString =
             'python3 ' . $this->tensorflowPath . '/' . $this->classificationScriptName .
-            ' --image ' . $assetLinkPath	.
+            ' --image ' . $assetLinkPath .
             ' --graph ' . $this->getGraphFullName($modelName, $modelVersion) .
             ' --labels ' . $this->getLabelFullName($modelName, $modelVersion) . ' ' .
             $this->standardPredictFlags;
         exec($execString, $results);
-        foreach ($results as $result) {
-            echo $result . "\n";
-        }
+//        foreach ($results as $result) {
+//            echo $result . "\n";
+//        }
 
         return $results;
     }
@@ -157,8 +158,8 @@ class ImageTaggingService
             $asset,
             $this->getTagWithHighestProbability(
                 $this->executeClassifierForSingleElement(
-                          $modelName,
-                          $modelVersion,
+                    $modelName,
+                    $modelVersion,
                     $this->linkAssetToTrainingLocation($asset)
                 )
             )
@@ -191,8 +192,8 @@ class ImageTaggingService
         $name = str_replace(' ', '-', $name);
         $db = \Pimcore\Db::get();
         $statement = 'select id from tags where name = ?';
-        $params = [ 0 => $name ];
-        $types = [ 0 => 'string' ];
+        $params = [0 => $name];
+        $types = [0 => 'string'];
         $result = $db->fetchAll($statement, $params, $types);
         if (sizeof($result) != 1) {
             throw new \Exception('tagname not unique or not existing');
@@ -210,7 +211,7 @@ class ImageTaggingService
         foreach ($pictures as $picture) {
             $assetPath = $picture->getFileSystemPath();
             if ($assetPath != '') {
-                exec('ln ' . $assetPath  . ' ' . $tagDir);
+                exec('ln ' . $assetPath . ' ' . $tagDir);
             }
         }
     }
@@ -232,19 +233,45 @@ class ImageTaggingService
 
     // commands
 
-    public function listModels()
+    public function listModels($extended = false)
     {
         exec('ls ' . $this->modelPath, $result);
 
-        return $result;
+        if($extended) {
+
+            $extendedResult = [];
+            foreach($result as $item) {
+
+                $parts = explode('.v', $item);
+                $extendedResult[] = [
+                    'name' => $parts[0],
+                    'version' => $parts[1]
+                ];
+            }
+
+            return $extendedResult;
+
+        } else {
+            return $result;
+        }
+
+
     }
 
+    /**
+     * @param string $modelName
+     * @param string $modelVersion
+     * @param string $path
+     * @param string $parentTag
+     * @throws \Exception
+     */
     public function train(
-          string $modelName,
+        string $modelName,
         string $modelVersion,
-          $path,
-          string $parentTag
-    ) {
+        string $path,
+        string $parentTag
+    )
+    {
         if ($path == null) {
             $path = $this->cachePath;
         }
@@ -262,11 +289,12 @@ class ImageTaggingService
     }
 
     public function retrain(
-          string $modelName,
+        string $modelName,
         string $modelVersion,
-          string $path,
-          int $instance
-     ) {
+        string $path,
+        int $instance
+    )
+    {
         if ($path == null) {
             $path = $this->cachePath;
         }
@@ -287,12 +315,4 @@ class ImageTaggingService
         $this->predictBatch($modelName, $modelVersion, $assetId);
     }
 
-    public static function getInstance()
-    {
-        if ($instance == null) {
-            $instance = new self;
-        }
-
-        return $instance;
-    }
 }
