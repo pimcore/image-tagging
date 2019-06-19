@@ -25,4 +25,4 @@ After training a model with training data, it is possible to auto-tag new images
 
 ## Credits
 
-- @poel22
+- [@poel22](https://github.com/poel22)
