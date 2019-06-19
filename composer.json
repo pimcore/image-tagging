@@ -6,16 +6,17 @@
     "sort-packages": true
   },
   "require": {
+    "pimcore/pimcore": ">=5.4 <6.1"
   },
   "autoload": {
     "psr-4": {
-      "Pimcore\\ImageTaggingBundle\\": "src/"
+      "Pimcore\\Bundle\\ImageTaggingBundle\\": "src/"
     }
   },
   "extra": {
     "pimcore": {
       "bundles": [
-        "Pimcore\\ImageTaggingBundle\\PimcoreImageTaggingBundle"
+        "Pimcore\\Bundle\\ImageTaggingBundle\\PimcoreImageTaggingBundle"
       ]
     }
   }
