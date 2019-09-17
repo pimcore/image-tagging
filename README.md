@@ -13,6 +13,9 @@ After training a model with training data, it is possible to auto-tag new images
 ## Usage: 
 
 - Preparing test data by assigning tags to asset images. 
+  - Requirements for tag names: 
+     - unique
+     - lower case
 
 - Training (and retraining) models via console command, e.g.
   
