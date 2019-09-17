@@ -70,11 +70,12 @@ class PimcoreTensorflowCommand extends AbstractCommand
                 InputOption::VALUE_OPTIONAL,
                 'parent tag (child tags are used as classes)'
             )
-            ->addoption(
+            ->addOption(
                 'path',
                 'p',
                 inputoption::VALUE_OPTIONAL,
-                'path (to parent folder) of the data to be classified'
+                'path (to parent folder) of the data to be classified',
+                ''
             );
     }
 
