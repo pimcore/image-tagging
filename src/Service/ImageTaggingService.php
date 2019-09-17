@@ -36,7 +36,7 @@ class ImageTaggingService
 
     public function __construct()
     {
-        $this->tensorflowPath = PIMCORE_PROJECT_ROOT . '/src/tensorflow';
+        $this->tensorflowPath = PIMCORE_COMPOSER_PATH . '/pimcore/image-tagging/src/Tensorflow';
 
         $tfDataPath = PIMCORE_PRIVATE_VAR . '/tensorflow-data';
         $this->modelPath = $tfDataPath . '/model/';
@@ -61,9 +61,10 @@ class ImageTaggingService
     private function linkAssetToTrainingLocation(Asset $asset, string $tagDir = null)
     {
         if ($tagDir == null) {
-            $tagDir = '"' . $this->cachePath . '/' . $asset->getFilename() . '"';
+            $tagDir = $this->cachePath . '/' . $asset->getFilename();
         }
-        exec('ln -s "' . $asset->getFileSystemPath() . '" ' . $tagDir);
+
+        exec('ln -s "' . $asset->getFileSystemPath() . '" "' . $tagDir . '"');
 
         return $tagDir;
     }
@@ -73,7 +74,7 @@ class ImageTaggingService
         $assets = Tag::getElementsForTag($child, 'asset');
         unset($assets[0]);
         $tagDir = $this->cachePath . '/' . $child->getName();
-        exec('mkdir ' . $tagDir);
+        exec('mkdir -p "' . $tagDir . '"');
         foreach ($assets as $asset) {
             $this->linkAssetToTrainingLocation($asset, $tagDir);
         }
@@ -189,12 +190,12 @@ class ImageTaggingService
 
     private function getTagIdByName(string $name)
     {
-        $name = str_replace(' ', '-', $name);
         $db = \Pimcore\Db::get();
         $statement = 'select id from tags where name = ?';
         $params = [0 => $name];
         $types = [0 => 'string'];
         $result = $db->fetchAll($statement, $params, $types);
+
         if (sizeof($result) != 1) {
             throw new \Exception('tagname not unique or not existing');
         }
@@ -207,11 +208,11 @@ class ImageTaggingService
         $pictures = Tag::getElementsForTag($child, 'asset');
         unset($pictures[0]);
         $tagDir = $this->cachePath . '/' . $child->getName();
-        exec('mkdir ' . $tagDir);
+        exec('mkdir -p "' . $tagDir . '"');
         foreach ($pictures as $picture) {
             $assetPath = $picture->getFileSystemPath();
             if ($assetPath != '') {
-                exec('ln ' . $assetPath . ' ' . $tagDir);
+                exec('ln "' . $assetPath . '" "' . $tagDir . '"');
             }
         }
     }
@@ -235,7 +236,7 @@ class ImageTaggingService
 
     public function listModels($extended = false)
     {
-        exec('ls ' . $this->modelPath, $result);
+        exec('ls "' . $this->modelPath . '"', $result);
 
         if($extended) {
 
@@ -284,6 +285,9 @@ class ImageTaggingService
             ' --output_graph ' . $graphName .
             ' --output_labels ' . $this->getLabelFullName($modelName, $modelVersion) . ' ' .
             $this->standardTrainFlags;
+
+//        echo $execString . "\n\n";
+
         exec($execString);
         $this->cleanCacheDir();
     }
