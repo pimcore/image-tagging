@@ -42,6 +42,10 @@ class ImageTaggingService
         $this->modelPath = $tfDataPath . '/model/';
         $this->labelPath = $tfDataPath . '/labels/';
         $this->cachePath = $tfDataPath . '/cache';
+
+        exec('mkdir -p "' . $this->modelPath . '"');
+        exec('mkdir -p "' . $this->labelPath . '"');
+
         $this->standardTrainFlags = '--testing_percentage 20 --validation_percentage 20 ' .
             '--how_many_training_steps 500 --bottleneck_dir ' . $tfDataPath . '/bottleneck';
     }
