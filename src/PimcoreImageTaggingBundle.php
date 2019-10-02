@@ -16,9 +16,19 @@
 namespace Pimcore\Bundle\ImageTaggingBundle;
 
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class PimcoreImageTaggingBundle extends AbstractPimcoreBundle
 {
+    use PackageVersionTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getComposerPackageName()
+    {
+        return 'pimcore/image-tagging';
+    }    
 
     public function getJsPaths()
     {
