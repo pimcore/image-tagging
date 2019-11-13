@@ -6,7 +6,7 @@
     "sort-packages": true
   },
   "require": {
-    "pimcore/pimcore": ">=5.4 <6.3"
+    "pimcore/pimcore": ">=5.4 <6.4"
   },
   "autoload": {
     "psr-4": {
